@@ -1,41 +1,213 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta charset="UTF-8">
-    <title>Users</title>
+    <title>All Users</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
 </head>
 <body>
-<h1>Users</h1>
-<div>
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>E-Mail</th>
-            <th>Roles</th>
-            <th>Set as admin</th>
-            <th>Delete user</th>
-        </tr>
-        <tr th:each="user : ${users}">
-            <td th:text="${user.name}"/>
-            <td th:text="${user.email}"/>
-            <td th:text="${user.roles}"/>
-            <td>
-                <input th:onclick="|window.location.href = '@{/edit(id=${user.getId()})}'|" type="button"
-                       value="Set"/>
-            </td>
-            <td>
-                <input th:onclick="|window.location.href = '@{/delete(id=${user.getId()})}'|" type="button"
-                       value="Delete"/>
-            </td>
-        </tr>
-    </table>
 
-    <br>
+<!--Navbar-->
+<header>
+    <nav class="navbar navbar-dark bg-dark p-0 shadow ">
+        <div class="nav-item text-white px-3">
+            <span class="fw-bold" th:text="${user.getEmail()}"></span>
+            <span>with roles:</span>
+            <span th:each="roles : ${user.getRoles()}"
+                  th:text="${#strings.substring(roles.getRole(), 5)} + ' '">
+            </span>
+        </div>
+        <ul class="navbar-nav">
+            <li class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="/logout">Logout</a>
+            </li>
+        </ul>
+    </nav>
+</header>
 
-    <input th:onclick="|window.location.href = '@{/logout}'|" type="button"
-           value="Logout"/>
+<div class="container-fluid mt-3 ">
 
+    <!--Sidebar-->
+    <div class="row">
+        <div class="col-md-2 px-0">
+            <div class="d-flex flex-column flex-shrink-0 p-0 text-white">
+                <ul class="nav nav-pills flex-column">
+                    <li class="nav-item">
+                        <a href="#admin-panel" data-bs-toggle="pill" class="nav-link active no-refresh" role="tab" aria-current="true">
+                            Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#userInfo" data-bs-toggle="pill" class="nav-link no-refresh" role="tab" aria-current="false">
+                            User
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="col-md-10 bg-light">
+            <div class="tab-content">
+
+                <!--Admin Panel-->
+                <div class="tab-pane fade show active" id="admin-panel" role="tabpanel">
+                    <div class="container-fluid">
+                        <h2>Admin Panel</h2>
+                        <ul class="nav nav-tabs border-bottom-0">
+                            <li class="nav-item">
+                                <a href="#users-table" id="show-users-table" class="nav-link active no-refresh"
+                                   data-bs-toggle="tab" aria-current="true" role="tab">
+                                    Users Table</a>
+                            </li>
+                        </ul>
+
+                        <!--User table-->
+                        <div class="tab-content">
+                            <div id="users-table" class="tab-pane fade show active">
+                                <div class="card">
+                                    <div class="container-fluid px-0 bg-light border t">
+                                        <h5 class="card-header">
+                                            All users</h5>
+                                    </div>
+
+                                    <div class="container-fluid mt-4">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped bg-white">
+                                                <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Name</th>
+                                                    <th>E-mail</th>
+                                                    <th>Role</th>
+                                                    <th>Set as Admin</th>
+                                                    <th>Delete</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr th:each="user : ${users}">
+                                                    <td th:text="${user.getId()}">Id</td>
+                                                    <td th:text="${user.getName()}">Name</td>
+                                                    <td th:text="${user.getEmail()}">Email</td>
+                                                    <td>
+                                                        <span th:each="role : ${user.getRoles()}"
+                                                              th:text="${role.toString()} + ' '"></span>
+                                                    </td>
+
+                                                    <!--set as admin-->
+                                                    <td>
+                                                        <button class="btn btn-primary" data-bs-toggle="modal"
+                                                                th:onclick="|window.location.href = '@{/edit(id=${user.getId()})}'|" type="button"
+                                                                value="Set">Set</button>
+                                                    </td>
+
+                                                    <!--Delete-->
+                                                    <td>
+                                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                                th:data-bs-target="${'#deleteModal'+ user.getId}">
+                                                            Delete</button>
+
+                                                        <div class="modal fade" th:id="${'deleteModal'+ user.getId}" tabindex="-1"
+                                                             aria-labelledby="delete" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h4 class="modal-title">Delete user</h4>
+                                                                        <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="card-body text-center">
+                                                                        <form th:action="@{/delete/{id}(id=${user.getId()})}" th:object="${user}">
+
+                                                                            <div class="modal-body col-7 mx-auto text-center">
+                                                                                <label for="idDelete" class="form-label fw-bold mb-0">ID</label>
+                                                                                <input type="text" th:value="${user.getId()}" class="form-control" id="idDelete" readonly>
+                                                                                <br>
+                                                                                <label for="firstNameDelete" class="form-label fw-bold mb-0">Name</label>
+                                                                                <input type="text" th:value="${user.getName()}" class="form-control" id="firstNameDelete" readonly>
+                                                                                <br>
+                                                                                <label for="emailDelete" class="form-label fw-bold mb-0">Email</label>
+                                                                                <input type="text" th:value="${user.getEmail()}" class="form-control" id="emailDelete" readonly>
+                                                                                <br>
+                                                                                <label for="rolesDelete" class="form-label fw-bold mb-0">Role</label>
+                                                                                <select class="form-select" id="rolesDelete" size="2" multiple="multiple" disabled>
+                                                                                    <option th:each="roles : ${user.getRoles()}"
+                                                                                            th:text="${#strings.substring(roles.getRole(), 5)} + ' '">
+                                                                                    </option>
+                                                                                </select>
+                                                                                <br>
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-secondary"
+                                                                                        data-bs-dismiss="modal">Close
+                                                                                </button>
+                                                                                <input type="submit" class="btn btn-danger"
+                                                                                       value="Delete"/>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--User info-->
+                <div class="tab-pane fade" id="userInfo" role="tabpanel">
+                    <div class="container-fluid">
+                        <h2>User Information Page</h2>
+                        <div class="card">
+                            <div class="container-fluid px-0 bg-light border">
+                                <h5 class="card-header">
+                                    About user</h5>
+                            </div>
+
+                            <div class="container-fluid mt-4">
+                                <div class="table-responsive">
+                                    <table class="table table-striped bg-white">
+                                        <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>E-mail</th>
+                                            <th>Role</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td th:text="${user.getId()}">Id</td>
+                                            <td th:text="${user.getName()}">Name</td>
+                                            <td th:text="${user.getEmail()}">Email</td>
+                                            <td>
+                                            <span th:each="roles : ${user.getRoles()}"
+                                                  th:text="${#strings.substring(roles.getRole(), 5)} + ' '"></span>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 </html>

@@ -1,0 +1,10 @@
+
+.table td form {
+    height: 15px;
+}
+
+.form .input {
+    height: 30px;
+    width: 300px;
+    margin: 0 auto;
+}
