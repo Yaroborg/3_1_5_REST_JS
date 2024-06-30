@@ -23,7 +23,7 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    //    @Transactional
+//    @Transactional
 //    @Query("Select u from User u left join fetch u.roles where u.name=:username")
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

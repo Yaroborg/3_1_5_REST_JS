@@ -8,7 +8,7 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 @Component
-public class UserValidator implements Validator {
+public class  UserValidator implements Validator {
 
     private final UserService userService;
 
