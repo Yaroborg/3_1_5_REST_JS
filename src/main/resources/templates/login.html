@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/style.css" th:href="@{/static/style.css}" type="text/css"/>
+    <title>Login page</title>
+
+</head>
+<body class="bg-light">
+<div class="container mt-5 col-lg-3">
+    <form method="POST" action="/login">
+        <h2><b>Please sign in</b></h2>
+        <form th:action="@{/login}" method="POST">
+
+            <label for="login-username"></label>
+            <input type="email" class="form-control" id="login-username" placeholder="Email address"
+                   name="username" required autofocus/>
+
+            <label for="login-password"></label>
+            <input type="password" class="form-control" id="login-password" placeholder="Password"
+                   name="password" required/>
+
+            <div th:if="${param.error}"
+                 class="alert alert-danger" role="alert">
+                Invalid username or password.
+            </div>
+
+            <div th:if="${param.logout}"
+                 class="alert alert-success">
+                Logout successful: you have been logged out.
+            </div>
+
+            <button type="submit" class="btn btn-lg btn-primary btn-block mt-4" id="sign-in">Sign in</button>
+        </form>
+    </form>
+</div>
+</body>
+</html>
